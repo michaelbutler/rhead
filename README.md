@@ -27,3 +27,7 @@ Options:
   -h, --help             Print help
   -V, --version          Print version
 ```
+
+# Limitations
+
+Input data stream or input file MUST contain UTF-8 otherwise it will be rejected.
