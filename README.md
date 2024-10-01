@@ -2,7 +2,7 @@
 
 A `head` clone written in Rust.
 
-"head" is a command line utility which gives you the first n lines (default 10) of STDIN or a text file.
+"head" is a command line utility which gives you the first n lines (default 10) of STDIN or a text file. It can also give you just the first `c` bytes of a file.
 
 # Usage Examples
 
