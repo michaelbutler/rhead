@@ -17,13 +17,12 @@ rhead -n 1 /etc/passwd
 ```
 Usage: rhead [OPTIONS] [FILE]
 
-If FILE is not present, it will read from STDIN.
-
 Arguments:
   [FILE]  The file to read from (optional)
 
 Options:
   -n, --number <NUMBER>  The number of lines to print [default: 10]
+  -c, --chars <CHARS>    The number of characters to print (optional) [default: 0]
   -h, --help             Print help
   -V, --version          Print version
 ```
