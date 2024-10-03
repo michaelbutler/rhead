@@ -29,4 +29,4 @@ Options:
 
 # Limitations
 
-Input data stream or input file MUST contain UTF-8 otherwise it will be rejected.
+Input data stream or input file MUST be valid UTF-8 otherwise it will be rejected. However, it is possible to output invalid UTF-8 data with -c because it operates on arbitrary number of bytes.

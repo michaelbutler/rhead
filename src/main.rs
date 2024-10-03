@@ -3,11 +3,11 @@
 //! ```shell
 //! $ cargo run -- -n 5 /etc/passwd
 //! $ cargo run -- -n 5 < /etc/passwd
-//! $ cargo run -- -c 3 < /etc/passwd
+//! $ cargo run -- -c 3 < myfile.txt
 //! ```
 
 use clap::Parser;
-use std::io::{BufRead, BufReader};
+use std::io::{BufRead, BufReader, Write};
 use std::vec;
 use std::{io, process::ExitCode};
 
@@ -50,8 +50,9 @@ fn print_chars<R: BufRead>(mut reader: R, n: u32) {
         match reader.read(&mut buffer[..bytes_to_read]) {
             Ok(0) => break,
             Ok(bytes_read) => {
-                print!("{}", std::str::from_utf8(&buffer[..bytes_read]).unwrap());
-                // io::stdout().write_all(&buffer[..bytes_read]).unwrap();
+                // This has the possibilty of printing invalid UTF-8 characters
+                // But it should not crash.
+                io::stdout().write_all(&buffer[..bytes_read]).unwrap();
                 bytes_remaining -= bytes_read;
             }
             Err(e) => {
