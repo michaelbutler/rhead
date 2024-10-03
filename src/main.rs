@@ -7,7 +7,8 @@
 //! ```
 
 use clap::Parser;
-use std::io::{BufRead, BufReader, Read};
+use std::io::{BufRead, BufReader};
+use std::vec;
 use std::{io, process::ExitCode};
 
 #[derive(Parser)]
@@ -38,14 +39,25 @@ fn print_lines<R: BufRead>(reader: R, num_lines: u32) {
     }
 }
 
-fn print_chars<R: BufRead>(reader: R, num_chars: u32) {
-    let mut count = num_chars;
-    // Not efficient but gets the job done
-    for byte in reader.bytes() {
-        print!("{}", byte.unwrap() as char);
-        count -= 1;
-        if count == 0 {
-            return;
+fn print_chars<R: BufRead>(mut reader: R, n: u32) {
+    let n = n as usize;
+    let buffer_size = n.min(4096);
+    let mut buffer = vec![0; buffer_size];
+    let mut bytes_remaining = n;
+
+    while bytes_remaining > 0 {
+        let bytes_to_read = bytes_remaining.min(buffer.len());
+        match reader.read(&mut buffer[..bytes_to_read]) {
+            Ok(0) => break,
+            Ok(bytes_read) => {
+                print!("{}", std::str::from_utf8(&buffer[..bytes_read]).unwrap());
+                // io::stdout().write_all(&buffer[..bytes_read]).unwrap();
+                bytes_remaining -= bytes_read;
+            }
+            Err(e) => {
+                eprintln!("Error reading file: {}", e);
+                return;
+            }
         }
     }
 }
@@ -77,9 +89,11 @@ fn main() -> ExitCode {
         None => Box::new(stdin.lock()),
     };
 
+    let mut br = BufReader::new(reader);
+
     match chars {
-        0 => print_lines(BufReader::new(reader) , count),
-        _ => print_chars(BufReader::new(reader), chars),
+        0 => print_lines(&mut br, count),
+        _ => print_chars(&mut br, chars),
     }
 
     ExitCode::SUCCESS
